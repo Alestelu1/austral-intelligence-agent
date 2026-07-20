@@ -20,12 +20,11 @@ Reglas:
 """.strip()
 
 
-def generate_answer(question: str) -> str:
-    """Generate a preliminary answer with Gemini.
-
-    This stage does not use RAG yet, so the response must explicitly state
-    that it is based on the general model and not on the documentary corpus.
-    """
+def generate_answer(
+    question: str,
+    context: str = "",
+) -> str:
+    """Generate an answer with optional documentary context."""
     api_key = get_gemini_api_key()
 
     if not api_key:
@@ -35,16 +34,31 @@ def generate_answer(question: str) -> str:
 
     client = genai.Client(api_key=api_key)
 
+    if context.strip():
+        evidence_block = f"""
+Contexto documental recuperado:
+{context}
+
+Reglas adicionales:
+- Responde utilizando solamente el contexto documental disponible.
+- No agregues datos externos como si estuvieran confirmados.
+- Si el contexto no contiene la respuesta, indícalo claramente.
+- Menciona las fuentes proporcionadas.
+""".strip()
+    else:
+        evidence_block = """
+No se recuperó contexto documental relevante.
+
+Indica que no existe evidencia suficiente en la colección local para responder.
+""".strip()
+
     prompt = f"""
 {SYSTEM_INSTRUCTION}
 
-La recuperación documental RAG todavía no está conectada.
+{evidence_block}
 
 Pregunta del usuario:
 {question}
-
-Responde de forma útil, pero comienza aclarando que esta respuesta todavía
-no ha sido verificada contra la colección documental del proyecto.
 """.strip()
 
     response = client.models.generate_content(

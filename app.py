@@ -3,6 +3,8 @@
 import streamlit as st
 
 from src.services.gemini_service import generate_answer
+from src.rag.document_loader import load_markdown_documents
+from src.rag.retriever import retrieve_documents
 
 
 st.set_page_config(
@@ -35,23 +37,44 @@ if st.button("Consultar", type="primary"):
     else:
         try:
             with st.spinner("Analizando la consulta..."):
-                answer = generate_answer(clean_question)
+                documents = load_markdown_documents()
 
-            st.subheader("Respuesta preliminar")
+                relevant_documents = retrieve_documents(
+                    clean_question,
+                    documents,
+                )
+
+                context = "\n\n".join(
+                    f"Fuente: {document.source}\n{document.content}"
+                    for document in relevant_documents
+                )
+
+                answer = generate_answer(
+                    clean_question,
+                    context=context,
+                )
+
+            st.subheader("Respuesta documental")
             st.write(answer)
 
-            st.warning(
-                "Esta respuesta aún no ha sido contrastada con el corpus "
-                "documental del proyecto."
-            )
+            if relevant_documents:
+                st.subheader("Fuentes recuperadas")
+
+                for document in relevant_documents:
+                    st.write(f"- `{document.source}`")
+            else:
+                st.warning(
+                    "No se encontraron documentos relevantes "
+                    "en la colección local."
+                )
 
         except RuntimeError as error:
             st.error(str(error))
 
         except Exception:
             st.error(
-                "No fue posible comunicarse con Gemini. "
-                "Revisa la API key, la conexión y la configuración del modelo."
+                "No fue posible procesar la consulta. "
+                "Revisa la conexión, la configuración y los documentos."
             )
 
 st.divider()
