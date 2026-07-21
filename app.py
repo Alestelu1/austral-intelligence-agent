@@ -3,7 +3,7 @@
 import streamlit as st
 
 from src.services.gemini_service import generate_answer
-from src.rag.document_loader import load_markdown_documents
+from src.rag.document_loader import load_all_documents
 from src.rag.retriever import retrieve_documents
 
 
@@ -37,7 +37,7 @@ if st.button("Consultar", type="primary"):
     else:
         try:
             with st.spinner("Analizando la consulta..."):
-                documents = load_markdown_documents()
+                documents = load_all_documents()
 
                 relevant_documents = retrieve_documents(
                     clean_question,
@@ -61,7 +61,12 @@ if st.button("Consultar", type="primary"):
                 st.subheader("Fuentes recuperadas")
 
                 for document in relevant_documents:
-                    st.write(f"- `{document.source}`")
+                    if document.page is not None:
+                        st.write(
+                            f"- `{document.source}`, página {document.page}"
+                        )
+                    else:
+                        st.write(f"- `{document.source}`")
             else:
                 st.warning(
                     "No se encontraron documentos relevantes "
