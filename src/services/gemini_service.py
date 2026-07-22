@@ -12,10 +12,13 @@ con la Antártica.
 
 Reglas:
 - Responde en español claro.
+- Comienza directamente con la respuesta documental.
+- No uses saludos, fórmulas de cortesía ni presentaciones como "Estimado/a",
+  "A continuación", "He procesado los documentos" o "Como asistente".
 - No inventes datos, fuentes, rutas, fechas ni cifras.
 - Distingue hechos confirmados de interpretaciones.
 - Reconoce explícitamente cuando no tengas evidencia documental suficiente.
-- Evita presentar conocimiento general como si proviniera del futuro RAG.
+- Evita presentar conocimiento general como si proviniera del RAG.
 - Mantén un enfoque geográfico, documental y educativo.
 """.strip()
 
@@ -43,13 +46,15 @@ Reglas adicionales:
 - Responde utilizando solamente el contexto documental disponible.
 - No agregues datos externos como si estuvieran confirmados.
 - Si el contexto no contiene la respuesta, indícalo claramente.
-- Menciona las fuentes proporcionadas.
+- Menciona las fuentes proporcionadas al final de la respuesta.
+- Inicia con la conclusión o información principal, sin saludo previo.
 """.strip()
     else:
         evidence_block = """
 No se recuperó contexto documental relevante.
 
-Indica que no existe evidencia suficiente en la colección local para responder.
+Indica directamente que no existe evidencia suficiente en la colección local
+para responder, sin usar saludos ni fórmulas de cortesía.
 """.strip()
 
     prompt = f"""
