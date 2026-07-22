@@ -76,8 +76,8 @@ if st.button("Consultar", type="primary"):
                         )
                     else:
                         st.write(f"- `{document.source}`")
-                else:
-                 st.warning(
+            else:
+                st.warning(
                     "No se encontraron documentos relevantes "
                     "en la colección local."
                 )
@@ -94,8 +94,8 @@ if st.button("Consultar", type="primary"):
 st.divider()
 
 st.caption(
-    "Las respuestas documentales futuras mostrarán fuentes y reconocerán "
-    "cuando no exista evidencia suficiente."
+    "Las respuestas se generan desde el corpus recuperado. "
+    "La información operativa debe verificarse en su fuente oficial."
 )
 
               
