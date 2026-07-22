@@ -60,15 +60,24 @@ if st.button("Consultar", type="primary"):
             if relevant_documents:
                 st.subheader("Fuentes recuperadas")
 
+                displayed_sources: set[tuple[str, int | None]] = set()
+
                 for document in relevant_documents:
+                    source_key = (document.source, document.page)
+
+                    if source_key in displayed_sources:
+                        continue
+
+                    displayed_sources.add(source_key)
+
                     if document.page is not None:
                         st.write(
                             f"- `{document.source}`, página {document.page}"
                         )
                     else:
                         st.write(f"- `{document.source}`")
-            else:
-                st.warning(
+                else:
+                 st.warning(
                     "No se encontraron documentos relevantes "
                     "en la colección local."
                 )
@@ -88,3 +97,5 @@ st.caption(
     "Las respuestas documentales futuras mostrarán fuentes y reconocerán "
     "cuando no exista evidencia suficiente."
 )
+
+              
