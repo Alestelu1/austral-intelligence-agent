@@ -1,10 +1,12 @@
 """Streamlit entry point for Austral Intelligence Agent."""
 
+from pathlib import Path
+
 import streamlit as st
 
-from src.services.gemini_service import generate_answer
 from src.rag.document_loader import load_all_documents
 from src.rag.retriever import retrieve_documents
+from src.services.gemini_service import generate_answer
 
 
 st.set_page_config(
@@ -70,12 +72,19 @@ if st.button("Consultar", type="primary"):
 
                     displayed_sources.add(source_key)
 
+                    extension = Path(document.source).suffix.lower()
+
                     if document.page is not None:
                         st.write(
                             f"- `{document.source}`, página {document.page}"
                         )
+                    elif extension == ".md":
+                        st.write(
+                            f"- `{document.source}`, documento Markdown "
+                            "sin paginación"
+                        )
                     else:
-                        st.write(f"- `{document.source}`")
+                        st.write(f"- `{document.source}`, sin paginación")
             else:
                 st.warning(
                     "No se encontraron documentos relevantes "
@@ -97,5 +106,3 @@ st.caption(
     "Las respuestas se generan desde el corpus recuperado. "
     "La información operativa debe verificarse en su fuente oficial."
 )
-
-              
