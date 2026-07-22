@@ -16,9 +16,9 @@ st.set_page_config(
 st.title("🧭 Austral Intelligence Agent")
 st.caption("Challenge Alura ONE / AI for Tech")
 
-st.info(
-    "Primera versión con Gemini. El corpus documental y la recuperación "
-    "RAG todavía se encuentran en construcción."
+st.success(
+    "MVP documental operativo con Gemini, recuperación local "
+    "y citas por fuente y página."
 )
 
 question = st.text_area(
