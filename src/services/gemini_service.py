@@ -4,6 +4,7 @@ from google import genai
 
 from src.config import get_gemini_api_key, get_model_name
 
+import re
 
 SYSTEM_INSTRUCTION = """
 Eres Austral Intelligence Agent, un asistente documental especializado en
@@ -13,8 +14,9 @@ con la Antártica.
 Reglas:
 - Responde en español claro.
 - Comienza directamente con la respuesta documental.
-- No uses saludos, fórmulas de cortesía ni presentaciones como "Estimado/a",
-  "A continuación", "He procesado los documentos" o "Como asistente".
+- La primera palabra de la respuesta debe contener información documental.
+- Está prohibido comenzar con saludos, cortesías o presentaciones.
+- Nunca uses "Estimado", "Estimada", "Estimado/a", "Como asistente" o expresiones equivalentes.
 - No inventes datos, fuentes, rutas, fechas ni cifras.
 - Distingue hechos confirmados de interpretaciones.
 - Reconoce explícitamente cuando no tengas evidencia documental suficiente.
@@ -74,4 +76,23 @@ Pregunta del usuario:
     if not response.text:
         raise RuntimeError("Gemini no devolvió una respuesta de texto.")
 
-    return response.text.strip()
+    answer = response.text.strip()
+
+    unwanted_openings = [
+        r"^estimado/a[:,]?\s*",
+        r"^estimado[:,]?\s*",
+        r"^estimada[:,]?\s*",
+        r"^como austral intelligence agent[:,]?\s*",
+        r"^como asistente[:,]?\s*",
+        r"^a continuación[:,]?\s*",
+    ]
+
+    for pattern in unwanted_openings:
+        answer = re.sub(
+            pattern,
+            "",
+            answer,
+            flags=re.IGNORECASE,
+        ).strip()
+
+    return answer
