@@ -1,10 +1,12 @@
 """Gemini integration for Austral Intelligence Agent."""
 
+import re
+
 from google import genai
 
 from src.config import get_gemini_api_key, get_model_name
 
-import re
+
 
 SYSTEM_INSTRUCTION = """
 Eres Austral Intelligence Agent, un asistente documental especializado en
@@ -78,21 +80,14 @@ Pregunta del usuario:
 
     answer = response.text.strip()
 
-    unwanted_openings = [
-        r"^estimado/a[:,]?\s*",
-        r"^estimado[:,]?\s*",
-        r"^estimada[:,]?\s*",
-        r"^como austral intelligence agent[:,]?\s*",
-        r"^como asistente[:,]?\s*",
-        r"^a continuación[:,]?\s*",
-    ]
-
-    for pattern in unwanted_openings:
-        answer = re.sub(
-            pattern,
-            "",
-            answer,
-            flags=re.IGNORECASE,
-        ).strip()
+    answer = re.sub(
+        r"^(estimado(?:/a|a|o)?(?:\([a-záéíóúñ]+\))?[:,]?\s*|"
+        r"a continuación[:,]?\s*|"
+        r"como austral intelligence agent[:,]?\s*|"
+        r"como asistente[:,]?\s*)",
+        "",
+        answer,
+        flags=re.IGNORECASE,
+    ).strip()
 
     return answer

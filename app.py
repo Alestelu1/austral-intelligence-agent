@@ -94,11 +94,12 @@ if st.button("Consultar", type="primary"):
         except RuntimeError as error:
             st.error(str(error))
 
-        except Exception:
+        except Exception as error:
             st.error(
                 "No fue posible procesar la consulta. "
                 "Revisa la conexión, la configuración y los documentos."
             )
+        
 
 st.divider()
 
